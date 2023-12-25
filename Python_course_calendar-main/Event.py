@@ -16,8 +16,5 @@
 """
 
 
-
-
-
 class Event:
     pass
