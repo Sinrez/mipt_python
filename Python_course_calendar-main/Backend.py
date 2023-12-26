@@ -8,15 +8,55 @@
 
 *) Нужно хранить для каждого пользователя все события которые с нима произошли но ещё не были обработаны.
 """
-import csv
-# from sq
+from sqlalchemy import create_engine, Column, Integer, String, ForeignKey
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker, relationship
+from hashlib import sha256
+
+Base = declarative_base()
+
+class User(Base):
+    __tablename__ = 'users'
+
+    id = Column(Integer, primary_key=True)
+    username = Column(String, nullable=False)
+    password_hash = Column(String, nullable=False)
+
+class Calendar(Base):
+    __tablename__ = 'calendars'
+
+    id = Column(Integer, primary_key=True)
+    user_id = Column(Integer, ForeignKey('users.id'), nullable=False)
+    user = relationship('User')
+
+class Event(Base):
+    __tablename__ = 'events'
+
+    id = Column(Integer, primary_key=True)
+    title = Column(String, nullable=False)
+    description = Column(String)
+    start_time = Column(String, nullable=False)
+    end_time = Column(String, nullable=False)
+    organizer_id = Column(Integer, ForeignKey('users.id'), nullable=False)
+    organizer = relationship('User')
+
+class PendingEvent(Base):
+    __tablename__ = 'pending_events'
+
+    user_id = Column(Integer, ForeignKey('users.id'), nullable=False, primary_key=True)
+    event_id = Column(Integer, ForeignKey('events.id'), nullable=False, primary_key=True)
+    user = relationship('User')
+    event = relationship('Event')
 
 class Backend:
     _instance = None
 
-    def __new__(cls):
+    def __new__(cls, database_path="sqlite:///calendar.db"):
         if cls._instance is None:
             cls._instance = super(Backend, cls).__new__(cls)
+            cls._instance.database_path = database_path
+            cls._instance.engine = create_engine(cls._instance.database_path)
+            cls._instance.create_tables()
             # Инициализация данных
             cls._instance.users = {}
             cls._instance.calendars = {}
@@ -24,44 +64,59 @@ class Backend:
             cls._instance.pending_events = {}
         return cls._instance
 
-    def save_data_to_csv(self, filename="data.csv"):
-        with open(filename, mode='w', newline='') as file:
-            writer = csv.writer(file)
-            # Сохранение данных пользователей
-            for user_id, user_data in self.users.items():
-                writer.writerow(["user", user_id, user_data["username"], user_data["password_hash"]])
+    def create_tables(self):
+        Base.metadata.create_all(self.engine)
 
-            # Сохранение данных календарей
-            for calendar_id, calendar_data in self.calendars.items():
-                writer.writerow(["calendar", calendar_id, calendar_data["user_id"]])
+    def save_data_to_database(self):
+        Session = sessionmaker(bind=self.engine)
+        session = Session()
 
-            # Сохранение данных событий
-            for event_id, event_data in self.events.items():
-                writer.writerow(["event", event_id, event_data["title"], event_data["description"],
-                                event_data["start_time"], event_data["end_time"], event_data["organizer_id"]])
+        try:
+            for user_data in self.users.values():
+                user = User(username=user_data["username"], password_hash=user_data["password_hash"])
+                session.add(user)
 
-            # Сохранение данных ожидающих событий
+            for calendar_data in self.calendars.values():
+                calendar = Calendar(user_id=calendar_data["user_id"])
+                session.add(calendar)
+
+            for event_data in self.events.values():
+                event = Event(title=event_data["title"], description=event_data["description"],
+                            start_time=event_data["start_time"], end_time=event_data["end_time"],
+                            organizer_id=event_data["organizer_id"])
+                session.add(event)
+
             for user_id, pending_events in self.pending_events.items():
                 for event_id in pending_events:
-                    writer.writerow(["pending_event", user_id, event_id])
+                    pending_event = PendingEvent(user_id=user_id, event_id=event_id)
+                    session.add(pending_event)
 
-    def load_data_from_csv(self, filename="data.csv"):
-        with open(filename, mode='r') as file:
-            reader = csv.reader(file)
-            for row in reader:
-                if row[0] == "user":
-                    _, user_id, username, password_hash = row
-                    self.users[user_id] = {"username": username, "password_hash": password_hash}
-                elif row[0] == "calendar":
-                    _, calendar_id, user_id = row
-                    self.calendars[calendar_id] = {"user_id": user_id}
-                elif row[0] == "event":
-                    _, event_id, title, description, start_time, end_time, organizer_id = row
-                    self.events[event_id] = {"title": title, "description": description,
-                                            "start_time": start_time, "end_time": end_time,
-                                            "organizer_id": organizer_id}
-                elif row[0] == "pending_event":
-                    _, user_id, event_id = row
-                    if user_id not in self.pending_events:
-                        self.pending_events[user_id] = []
-                    self.pending_events[user_id].append(event_id)
+            session.commit()
+        finally:
+            session.close()
+
+    def load_data_from_database(self):
+        Session = sessionmaker(bind=self.engine)
+        session = Session()
+
+        try:
+            users = session.query(User).all()
+            self.users = {user.id: {"username": user.username, "password_hash": user.password_hash} for user in users}
+
+            calendars = session.query(Calendar).all()
+            self.calendars = {calendar.id: {"user_id": calendar.user_id} for calendar in calendars}
+
+            events = session.query(Event).all()
+            self.events = {event.id: {"title": event.title, "description": event.description,
+                                    "start_time": event.start_time, "end_time": event.end_time,
+                                    "organizer_id": event.organizer_id} for event in events}
+
+            pending_events = session.query(PendingEvent).all()
+            self.pending_events = {pending_event.user_id: [pending_event.event_id] for pending_event in pending_events}
+
+        finally:
+            session.close()
+
+    @staticmethod
+    def hash_password(password):
+        return sha256(password.encode()).hexdigest()

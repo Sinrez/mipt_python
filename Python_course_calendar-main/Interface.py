@@ -11,3 +11,14 @@
 
 class Interface:
     pass
+    def create_calendar(self):
+        # Реализация создания календаря для пользователя
+        pass
+
+    def create_event(self, calendar_id, event_data):
+        # Реализация создания события пользователем
+        pass
+
+    def delete_event(self, event_id):
+        # Реализация удаления события пользователем
+        pass
