@@ -7,7 +7,10 @@
 
 в main можно использовать ТОЛЬКО interface
 """
-
+from Backend import Backend
+from Calendar import Calendar
+from Event import Event
+from User import User
 
 class Interface:
     pass

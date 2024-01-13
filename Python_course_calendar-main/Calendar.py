@@ -14,7 +14,6 @@ class Calendar:
 
     def add_event(self, event_id, title, description, start_time, end_time):
         #event_id будем получить из класса Event
-        # event_id = len(self.events) + 1  # Простой способ генерации уникального идентификатора
         event_data = {
             "title": title,
             "description": description,

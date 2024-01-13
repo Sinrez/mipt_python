@@ -6,7 +6,7 @@
 
 Должен быть статическим или Синглтоном
 
-*) Нужно хранить для каждого пользователя все события которые с нима произошли но ещё не были обработаны.
+*) Нужно хранить для каждого пользователя все события которые с ним произошли но ещё не были обработаны.
 """
 from sqlalchemy import create_engine, Column, Integer, String, ForeignKey
 from sqlalchemy.ext.declarative import declarative_base

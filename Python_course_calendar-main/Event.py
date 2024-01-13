@@ -16,4 +16,5 @@
 from uuid import uuid4
 
 class Event:
-    pass
+    def __init__(self, username, password):
+        self.event_id = hash(uuid4())
