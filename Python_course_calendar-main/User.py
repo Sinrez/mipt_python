@@ -40,12 +40,6 @@ class User:
     #     self.backend.users[self.user_id] = user_data
     #     self.backend.save_data_to_database()
 
-        # Сохраняем календарь пользователя
-        # calendar_id = len(self.calendars) + 1
-        # calendar_data = {"user_id": self.user_id}
-        # self.backend.calendars[calendar_id] = calendar_data
-        # self.backend.save_data_to_database()
-
     # @classmethod
     # def load_from_database(cls, backend, user_id):
     #     user_data = backend.users.get(user_id)

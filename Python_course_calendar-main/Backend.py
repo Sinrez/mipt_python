@@ -20,6 +20,7 @@ class User(Base):
 
     id = Column(Integer, primary_key=True)
     username = Column(String, nullable=False)
+    user_mail = Column(String, nullable=False)
     password_hash = Column(String, nullable=False)
 
 class Calendar(Base):
@@ -33,12 +34,13 @@ class Event(Base):
     __tablename__ = 'events'
 
     id = Column(Integer, primary_key=True)
-    title = Column(String, nullable=False)
+    name = Column(String, nullable=False)
     description = Column(String)
     start_time = Column(String, nullable=False)
     end_time = Column(String, nullable=False)
+    location = Column(String, nullable=False)
     organizer_id = Column(Integer, ForeignKey('users.id'), nullable=False)
-    organizer = relationship('Calendar')
+    organizer = relationship('User')
     event_users = Column(String)
 
 class PendingEvent(Base):
@@ -74,7 +76,7 @@ class Backend:
 
         try:
             for user_data in self.users.values():
-                user = User(username=user_data["username"], password_hash=user_data["password_hash"])
+                user = User(username=user_data["username"], user_mail=user_data["user_mail"], password_hash=user_data["password_hash"])
                 session.add(user)
 
             for calendar_data in self.calendars.values():
@@ -82,9 +84,9 @@ class Backend:
                 session.add(calendar)
 
             for event_data in self.events.values():
-                event = Event(title=event_data["title"], description=event_data["description"],
+                event = Event(name=event_data["name"], description=event_data["description"],
                             start_time=event_data["start_time"], end_time=event_data["end_time"],
-                            organizer_id=event_data["organizer_id"])
+                            location=event_data["location"], organizer_id=event_data["organizer_id"])
                 session.add(event)
 
             for user_id, pending_events in self.pending_events.items():
@@ -102,15 +104,15 @@ class Backend:
 
         try:
             users = session.query(User).all()
-            self.users = {user.id: {"username": user.username, "password_hash": user.password_hash} for user in users}
+            self.users = {user.id: {"username": user.username, "user_mail": user.user_mail, "password_hash": user.password_hash} for user in users}
 
             calendars = session.query(Calendar).all()
             self.calendars = {calendar.id: {"user_id": calendar.user_id} for calendar in calendars}
 
             events = session.query(Event).all()
-            self.events = {event.id: {"title": event.title, "description": event.description,
+            self.events = {event.id: {"name": event.name, "description": event.description,
                                     "start_time": event.start_time, "end_time": event.end_time,
-                                    "organizer_id": event.organizer_id} for event in events}
+                                    "location": event.location, "organizer_id": event.organizer_id} for event in events}
 
             pending_events = session.query(PendingEvent).all()
             self.pending_events = {pending_event.user_id: [pending_event.event_id] for pending_event in pending_events}
