@@ -7,50 +7,66 @@
 from Backend import Backend
 
 class Calendar:
-    def __init__(self, backend, user_id):
-        self.backend = backend
+    # def __init__(self, backend, user_id):
+    #     self.backend = backend
+    #     self.user_id = user_id
+    #     self.events = []
+
+    def __init__(self, user_id):
         self.user_id = user_id
         self.events = []
 
-    def add_event(self, event_id, title, description, start_time, end_time):
-        #event_id будем получить из класса Event
-        event_data = {
-            "title": title,
-            "description": description,
-            "start_time": start_time,
-            "end_time": end_time,
-            "organizer_id": self.user_id
-        }
-        self.backend.events[event_id] = event_data
-        self.events.append(event_id)
-        return event_id
+    def add_event(self, event):
+        self.events.append(event)
+    
+    def get_events(self):
+        print(f'События пользователя {self.user_id}')
+        for ev in self.events:
+            print(ev) 
 
     def remove_event(self, event_id):
         if event_id in self.events:
-            self.backend.events.pop(event_id)
+            # self.backend.events.pop(event_id)
             self.events.remove(event_id)
             return True
         return False
 
-    def search_events(self, start_date, end_date):
-        result = []
-        for event_id in self.events:
-            event_data = self.backend.events.get(event_id)
-            if event_data and start_date <= event_data["start_time"] <= end_date:
-                result.append(event_data)
-        return result
+    # def search_events(self, start_date, end_date):
+    #     result = []
+    #     for event_id in self.events:
+    #         event_data = self.backend.events.get(event_id)
+    #         if event_data and start_date <= event_data["start_time"] <= end_date:
+    #             result.append(event_data)
+    #     return result
 
 # Пример использования:
-backend_instance = Backend()
-calendar_instance = Calendar(backend_instance, user_id=1)
+# backend_instance = Backend()
+# calendar_instance = Calendar(backend_instance, user_id=1)
 
 # Добавление события
-event_id = calendar_instance.add_event("Meeting", "Team meeting", "2023-01-01 10:00", "2023-01-01 11:00")
-
-# Удаление события
-# if calendar_instance.remove_event(event_id):
-#     print(f"Event {event_id} removed successfully")
+# event_id = calendar_instance.add_event("Meeting", "Team meeting", "2023-01-01 10:00", "2023-01-01 11:00")
 
 # Поиск событий в промежутке
-events_in_range = calendar_instance.search_events("2023-01-01 00:00", "2023-01-02 00:00")
-print("Events in range:", events_in_range)
+# events_in_range = calendar_instance.search_events("2023-01-01 00:00", "2023-01-02 00:00")
+# print("Events in range:", events_in_range)
+
+#локальная проверка
+if __name__ == '__main__':
+    from datetime import datetime
+    from Event import Event
+    from User import User
+
+    user1 = User('Bob2', '12')
+    user1_id = user1.get_user_id()
+    event1 = Event("New Year's Eve Party", datetime(2023, 12, 31, 22, 0),datetime(2023, 12, 31, 22, 0), "Town Hall", user1)
+    event2 = Event("New Year's Eve Party", datetime(2024, 12, 31, 22, 0),datetime(2024, 12, 31, 22, 0), "Town Hall", user1)
+    event3 = Event("New Year's Eve Party", datetime(2023, 11, 11, 22, 0),datetime(2023, 11, 12, 22, 0), "Town Hall", user1)
+    calendar1 = Calendar(user1_id)
+    calendar1.add_event(event1)
+    calendar1.add_event(event2)
+    calendar1.add_event(event3)
+    calendar1.get_events()
+
+    # Удаление события
+    if event_id:= calendar1.remove_event(event3.get_event_id()):
+        print(f"Event {event_id} removed successfully")

@@ -38,7 +38,8 @@ class Event(Base):
     start_time = Column(String, nullable=False)
     end_time = Column(String, nullable=False)
     organizer_id = Column(Integer, ForeignKey('users.id'), nullable=False)
-    organizer = relationship('User')
+    organizer = relationship('Calendar')
+    event_users = Column(String)
 
 class PendingEvent(Base):
     __tablename__ = 'pending_events'
