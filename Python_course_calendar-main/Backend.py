@@ -19,6 +19,7 @@ class User(Base):
     __tablename__ = 'users'
 
     id = Column(Integer, primary_key=True)
+    user_id = Column(String, nullable=False)
     username = Column(String, nullable=False)
     user_mail = Column(String, nullable=False)
     password_hash = Column(String, nullable=False)
@@ -76,7 +77,7 @@ class Backend:
 
         try:
             for user_data in self.users.values():
-                user = User(username=user_data["username"], user_mail=user_data["user_mail"], password_hash=user_data["password_hash"])
+                user = User(user_id=user_data["user_id"], username=user_data["username"], user_mail=user_data["user_mail"], password_hash=user_data["password_hash"])
                 session.add(user)
 
             for calendar_data in self.calendars.values():
