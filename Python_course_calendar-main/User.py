@@ -25,6 +25,9 @@ class User:
     
     def get_user_name(self):
         return self.username
+    
+    def __str__(self):
+        return f"ID: {self.get_user_id()} Пользователь: {self.username} Почта: {self.user_mail}"
 
     @staticmethod
     def hash_password(password):

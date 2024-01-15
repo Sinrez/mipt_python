@@ -34,7 +34,7 @@ class Interface:
         user1_id = user1.get_user_id()
         print(user1_id)
         user1.save_to_database()
-        user1.load_from_database(backend_instance, user1_id)
+        print(user1.load_from_database(backend_instance, user1_id))
         event1 = Event("New Year's Eve Party", datetime(2023, 12, 31, 22, 0),datetime(2023, 12, 31, 22, 0), "Town Hall", user1)
         event2 = Event("New Year's Eve Party", datetime(2023, 12, 31, 22, 0),datetime(2023, 12, 31, 22, 0), "Town Hall", user1)
 
