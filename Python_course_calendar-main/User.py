@@ -14,7 +14,7 @@ class User:
     def user_passwd_checker(self, password):
         pass
 
-    def user_mail_checker(self, user_mail):
+    def format_mail_checker(self, user_mail):
         pass
 
     def authenticate(self, password):
@@ -26,6 +26,9 @@ class User:
     def get_user_name(self):
         return self.username
     
+    def get_user_mail(self):
+        return self.user_mail    
+    
     def __str__(self):
         return f"ID: {self.get_user_id()} Пользователь: {self.username} Почта: {self.user_mail}"
 
@@ -34,9 +37,16 @@ class User:
         return sha256(password.encode()).hexdigest()
     
     def save_to_database(self):
-        user_data = {"user_id":  self.__user_id, "username": self.username, "user_mail": self.user_mail, "password_hash": self.__password_hash}
-        self.backend.users[self.__user_id] = user_data
-        self.backend.save_data_to_database()
+        # Проверяем, есть ли пользователь с такой почтой уже в базе
+        existing_user = self.backend.get_user_by_mail(self.user_mail)
+        
+        if existing_user:
+            print(f"Пользователь с почтой {self.user_mail} уже существует.")
+        else:
+            # Сохраняем пользователя в базу данных
+            user_data = {"user_id":  self.__user_id, "username": self.username, "user_mail": self.user_mail, "password_hash": self.__password_hash}
+            self.backend.users[self.__user_id] = user_data
+            self.backend.save_data_to_database()
 
     @classmethod
     def load_from_database(cls, backend, user_id):

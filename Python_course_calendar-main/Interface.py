@@ -30,10 +30,10 @@ class Interface:
         backend_instance = Backend()
         calendar_instance = Calendar(backend_instance, user_id=1)
 
-        user1 = User(backend_instance, 'Bob2', 'bob@mail.ru','12')
+        user1 = User(backend_instance, 'Bob1', 'bob1@mail.ru','12')
         user1_id = user1.get_user_id()
         print(user1_id)
-        user1.save_to_database()
+        user1_mail = user1.get_user_mail()
         print(user1.load_from_database(backend_instance, user1_id))
         event1 = Event("New Year's Eve Party", datetime(2023, 12, 31, 22, 0),datetime(2023, 12, 31, 22, 0), "Town Hall", user1)
         event2 = Event("New Year's Eve Party", datetime(2023, 12, 31, 22, 0),datetime(2023, 12, 31, 22, 0), "Town Hall", user1)

@@ -71,6 +71,16 @@ class Backend:
     def create_tables(self):
         Base.metadata.create_all(self.engine)
 
+    def get_user_by_mail(self, user_mail):
+        # Поиск пользователя по почте в базе данных
+        Session = sessionmaker(bind=self.engine)
+        session = Session()
+        try:
+            user = session.query(User).filter_by(user_mail=user_mail).first()
+            return user
+        finally:
+            session.close()
+
     def save_data_to_database(self):
         Session = sessionmaker(bind=self.engine)
         session = Session()
