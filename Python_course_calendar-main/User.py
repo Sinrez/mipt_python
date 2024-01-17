@@ -39,7 +39,10 @@ class User:
     def save_to_database(self):
         # Проверяем, есть ли пользователь с такой почтой уже в базе
         existing_user = self.backend.get_user_by_mail(self.user_mail)
+        # print(existing_user.user_mail)
+        print(existing_user)
         
+        # if existing_user is not None and '@' in existing_user.user_mail:
         if existing_user:
             print(f"Пользователь с почтой {self.user_mail} уже существует.")
         else:
@@ -47,6 +50,7 @@ class User:
             user_data = {"user_id":  self.__user_id, "username": self.username, "user_mail": self.user_mail, "password_hash": self.__password_hash}
             self.backend.users[self.__user_id] = user_data
             self.backend.save_data_to_database()
+
 
     @classmethod
     def load_from_database(cls, backend, user_id):
