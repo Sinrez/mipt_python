@@ -86,8 +86,10 @@ class Backend:
         try:
             user = session.query(User).filter_by(user_mail=user_mail).first()
             # print(f"Found user by mail {user_mail}: {user}")
-            if user is not None:
+            if hasattr(user,'user_mail'):
                 return user.user_mail
+            else:
+                return False
         finally:
             session.close()
 

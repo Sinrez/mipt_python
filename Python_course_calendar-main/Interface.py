@@ -30,7 +30,8 @@ class Interface:
         backend_instance = Backend()
         # calendar_instance = Calendar(backend_instance, user_id=1)
 
-        user1 = User(backend_instance, '0000006', 'bob00000006@mail.ru','12')
+        user1 = User(backend_instance, '0000008', 'bob00000008@mail.ru','12')
+        user1.save_to_database()
         user1_id = user1.get_user_id()
         print(user1_id)
         user1_mail = user1.get_user_mail()
