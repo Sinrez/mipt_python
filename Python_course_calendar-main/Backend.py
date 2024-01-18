@@ -1,7 +1,6 @@
 """
 Сущность, отвечающая за храние и предоставление данных
 Оно хранит пользователей, календари и события.
-Хранение в том числе означает сохранение между сессиями в csv файлах
 (пароли пользователей хранятся как hash)
 
 Должен быть статическим или Синглтоном
@@ -55,14 +54,6 @@ class PendingEvent(Base):
 class Backend:
     _instance = None
 
-    def is_empty(self):
-        Session = sessionmaker(bind=self.engine)
-        session = Session()
-        try:
-            return session.query(User).count() == 0
-        finally:
-            session.close()
-
     def __new__(cls, database_path="sqlite:///calendar.db"):
         if cls._instance is None:
             cls._instance = super(Backend, cls).__new__(cls)
@@ -79,29 +70,26 @@ class Backend:
     def create_tables(self):
         Base.metadata.create_all(self.engine)
 
+    def is_empty(self):
+        Session = sessionmaker(bind=self.engine)
+        session = Session()
+        try:
+            print(f'Число юзеров {session.query(User).count()}')
+            return session.query(User).count() == 0
+        finally:
+            session.close()
+
     def get_user_by_mail(self, user_mail):
         # Поиск пользователя по почте в базе данных
         Session = sessionmaker(bind=self.engine)
         session = Session()
         try:
             user = session.query(User).filter_by(user_mail=user_mail).first()
-            print(f"Found user by mail {user_mail}: {user}")
-            return user
+            # print(f"Found user by mail {user_mail}: {user}")
+            if user is not None:
+                return user.user_mail
         finally:
             session.close()
-
-    # def get_user_by_mail(self, user_mail):
-    #     # Поиск пользователя по почте в базе данных
-    #     Session = sessionmaker(bind=self.engine)
-    #     session = Session()
-    #     try:
-    #         user = session.query(User).filter_by(user_mail=user_mail).first()
-    #         if user:
-    #             return {"user_id": user.user_id, "username": user.username, "user_mail": user.user_mail, "password_hash": user.password_hash}
-    #         return None
-    #     finally:
-    #         session.close()
-
 
     def save_data_to_database(self):
         Session = sessionmaker(bind=self.engine)

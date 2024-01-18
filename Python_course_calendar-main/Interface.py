@@ -28,9 +28,9 @@ class Interface:
 
         # Пример использования с БД:
         backend_instance = Backend()
-        calendar_instance = Calendar(backend_instance, user_id=1)
+        # calendar_instance = Calendar(backend_instance, user_id=1)
 
-        user1 = User(backend_instance, 'Bob101010', 'bob101010@mail.ru','12')
+        user1 = User(backend_instance, '0000006', 'bob00000006@mail.ru','12')
         user1_id = user1.get_user_id()
         print(user1_id)
         user1_mail = user1.get_user_mail()
@@ -39,8 +39,8 @@ class Interface:
         event2 = Event("New Year's Eve Party", datetime(2023, 12, 31, 22, 0),datetime(2023, 12, 31, 22, 0), "Town Hall", user1)
 
         # Добавление события
-        event_id = calendar_instance.add_event(event1)
+        # event_id = calendar_instance.add_event(event1)
 
         # Поиск событий в промежутке
-        events_in_range = calendar_instance.search_events("2023-01-01 00:00", "2024-01-02 00:00")
-        print("Events in range:", events_in_range)
+        # events_in_range = calendar_instance.search_events("2023-01-01 00:00", "2024-01-02 00:00")
+        # print("Events in range:", events_in_range)
