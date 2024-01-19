@@ -12,10 +12,6 @@ class Calendar:
         self.user_id = user_id
         self.events = []
 
-    # def __init__(self, user_id):
-    #     self.user_id = user_id
-    #     self.events = []
-
     def add_event(self, event):
         self.events.append(event)
     
@@ -38,6 +34,11 @@ class Calendar:
             if event_data and start_date <= event_data["start_time"] <= end_date:
                 result.append(event_data)
         return result
+    
+    def save_calend_to_database(self):
+        calend_data = {"user_id":  self.__user_id, "username": self.username, "user_mail": self.user_mail, "password_hash": self.__password_hash}
+        self.backend.users[self.__user_id] = calend_data
+        self.backend.save_data_to_database()
 
 #локальная проверка
 # if __name__ == '__main__':

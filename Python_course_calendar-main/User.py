@@ -39,19 +39,19 @@ class User:
     def save_to_database(self):
         # Проверяем, есть ли пользователь с такой почтой уже в базе
         is_emmpty_db = self.backend.is_empty()
-        print(f'База пустая? {is_emmpty_db}')
+        # print(f'База пустая? {is_emmpty_db}')
 
         if is_emmpty_db:
             #если база пустая то сохраняем первого пользователя
-            print('Сохранение юзера в пустую базу')
+            # print('Сохранение юзера в пустую базу')
             user_data = {"user_id":  self.__user_id, "username": self.username, "user_mail": self.user_mail, "password_hash": self.__password_hash}
             self.backend.users[self.__user_id] = user_data
             self.backend.save_data_to_database()
         else:
             existing_user_mail = self.backend.get_user_by_mail(self.user_mail)
-            print(f'Тут получаю {existing_user_mail}')
+            # print(f'Тут получаю {existing_user_mail}')
             if existing_user_mail:
-                print(existing_user_mail)
+                # print(existing_user_mail)
                 print(f"Пользователь с почтой {self.user_mail} уже существует.")
                 # Сохраняем пользователя в базу данных
             else:

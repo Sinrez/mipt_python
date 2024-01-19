@@ -30,15 +30,19 @@ class Interface:
         backend_instance = Backend()
         # calendar_instance = Calendar(backend_instance, user_id=1)
 
-        user1 = User(backend_instance, '0000008', 'bob00000008@mail.ru','12')
-        user1.save_to_database()
-        user1_id = user1.get_user_id()
-        print(user1_id)
-        user1_mail = user1.get_user_mail()
-        print(user1.load_from_database(backend_instance, user1_id))
-        event1 = Event("New Year's Eve Party", datetime(2023, 12, 31, 22, 0),datetime(2023, 12, 31, 22, 0), "Town Hall", user1)
-        event2 = Event("New Year's Eve Party", datetime(2023, 12, 31, 22, 0),datetime(2023, 12, 31, 22, 0), "Town Hall", user1)
+        # user1 = User(backend_instance, '0000008', 'bob00000008@mail.ru','12')
+        # user1.save_to_database()
+        # user1_id = user1.get_user_id()
+        # print(user1_id)
+        # user1_mail = user1.get_user_mail()
+        # print(user1.load_from_database(backend_instance, user1_id))
+        user_id = '@3338604180537380828'
 
+        event1 = Event("New Year's Eve Party", datetime(2023, 12, 31, 22, 0),datetime(2023, 12, 31, 22, 0), "Town Hall", user_id)
+        event2 = Event("New Year's Eve Party", datetime(2023, 12, 31, 22, 0),datetime(2023, 12, 31, 22, 0), "Town Hall", user_id)
+
+        print(event1)
+        
         # Добавление события
         # event_id = calendar_instance.add_event(event1)
 
