@@ -43,6 +43,13 @@ class Event(Base):
     organizer = relationship('User')
     event_users = Column(String)
 
+class EventsInCalendar(Base):
+    __tablename__ = 'events_in_calendar'
+
+    id = Column(Integer, primary_key=True)
+    calendar_id = Column(Integer, ForeignKey('calendars.id'), nullable=False)
+    event_id = Column(Integer, ForeignKey('events.id'), nullable=False)
+
 class PendingEvent(Base):
     __tablename__ = 'pending_events'
 
@@ -65,6 +72,7 @@ class Backend:
             cls._instance.calendars = {}
             cls._instance.events = {}
             cls._instance.pending_events = {}
+            cls._instance.events_calendar = {}
         return cls._instance
 
     def create_tables(self):
@@ -116,6 +124,11 @@ class Backend:
                 for event_id in pending_events:
                     pending_event = PendingEvent(user_id=user_id, event_id=event_id)
                     session.add(pending_event)
+        
+            for calendar_id, event_ids in self.events_calendar.items():
+                for event_id in event_ids:
+                    event_in_calendar = EventsInCalendar(calendar_id=calendar_id, event_id=event_id)
+                    session.add(event_in_calendar)
 
             session.commit()
         finally:
@@ -139,6 +152,9 @@ class Backend:
 
             pending_events = session.query(PendingEvent).all()
             self.pending_events = {pending_event.user_id: [pending_event.event_id] for pending_event in pending_events}
+
+            events_in_calendar = session.query(EventsInCalendar).all()
+            self.events_calendar = {event_in_calendar.calendar_id: [event_in_calendar.event_id] for event_in_calendar in events_in_calendar}
 
         finally:
             session.close()

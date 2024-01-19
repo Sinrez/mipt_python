@@ -36,7 +36,7 @@ class Interface:
         # print(user1_id)
         # user1_mail = user1.get_user_mail()
         # print(user1.load_from_database(backend_instance, user1_id))
-        user_id = '@3338604180537380828'
+        # user_id = '@5024252284651110812'
 
         event1 = Event("New Year's Eve Party", datetime(2023, 12, 31, 22, 0),datetime(2023, 12, 31, 22, 0), "Town Hall", user_id)
         event2 = Event("New Year's Eve Party", datetime(2023, 12, 31, 22, 0),datetime(2023, 12, 31, 22, 0), "Town Hall", user_id)

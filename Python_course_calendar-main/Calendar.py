@@ -5,9 +5,11 @@
 У каждого календаря ровно один пользователь.
 """
 from Backend import Backend
+from uuid import uuid4
 
 class Calendar:
     def __init__(self, backend, user_id):
+        self.calendar_id = abs(hash(str(uuid4())))
         self.backend = backend
         self.user_id = user_id
         self.events = []
