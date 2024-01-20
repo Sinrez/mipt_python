@@ -9,7 +9,6 @@ class User:
         self.username = username
         self.user_mail = user_mail
         self.__password_hash = self.hash_password(password)
-        # self.save_to_database()
     
     def user_passwd_checker(self, password):
         pass
@@ -72,7 +71,7 @@ class User:
         calendar_ids = [calendar_id for calendar_id, data in self.backend.calendars.items() if data["user_id"] == self.__user_id]
         self.calendars = calendar_ids
 
-if __name__ == '__main__':
-    backend_instance = Backend()
-    user1 = User(backend_instance, 'Bob', 'bob@example.com', 'password')
-    print(user1.get_user_id())
+# if __name__ == '__main__':
+#     backend_instance = Backend()
+#     user1 = User(backend_instance, 'Bob', 'bob@example.com', 'password')
+#     print(user1.get_user_id())

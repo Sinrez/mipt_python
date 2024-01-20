@@ -37,10 +37,26 @@ class Calendar:
                 result.append(event_data)
         return result
     
-    def save_calend_to_database(self):
-        calend_data = {"user_id":  self.__user_id, "username": self.username, "user_mail": self.user_mail, "password_hash": self.__password_hash}
-        self.backend.users[self.__user_id] = calend_data
-        self.backend.save_data_to_database()
+    # def save_calendar_to_database(self):
+    #     calend_data = {"calendar_id":  self.calendar_id, "user_id": self.user_id}
+    #     self.backend.users[self.calendar_id] = calend_data
+    #     self.backend.save_data_to_database()
+
+    def save_calendar_to_database(self):
+        self.backend.save_calendar_to_database(self.user_id)
+
+    def add_event(self, event):
+        self.backend.save_event_to_database({
+            "event_id": event.event_id,
+            "name": event.event_name,
+            "description": event.event_description,
+            "start_time": event.event_start_date,
+            "end_time": event.event_end_date,
+            "location": event.event_location,
+            "organizer_id": event.event_admin
+        })
+        self.backend.save_event_in_calendar_to_database(self.calendar_id, event.event_id)
+        self.events.append(event.event_id)
 
 #локальная проверка
 # if __name__ == '__main__':

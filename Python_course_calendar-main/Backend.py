@@ -34,6 +34,7 @@ class Event(Base):
     __tablename__ = 'events'
 
     id = Column(Integer, primary_key=True)
+    event_id = Column(Integer, nullable=False)
     name = Column(String, nullable=False)
     description = Column(String)
     start_time = Column(String, nullable=False)
@@ -134,6 +135,48 @@ class Backend:
         finally:
             session.close()
 
+    def save_calendar_to_database(self, user_id):
+            calendar_data = self.calendars.get(user_id)
+            if calendar_data:
+                calendar = Calendar(user_id=calendar_data["user_id"])
+                session = self.create_session()
+                try:
+                    session.add(calendar)
+                    session.commit()
+                finally:
+                    session.close()
+
+    def save_event_to_database(self, event_data):
+            event = Event(
+                name=event_data["name"],
+                event_id=event_data["event_id"],
+                description=event_data["description"],
+                start_time=event_data["start_time"],
+                end_time=event_data["end_time"],
+                location=event_data["location"],
+                organizer_id=event_data["organizer_id"]
+            )
+            session = self.create_session()
+            try:
+                session.add(event)
+                session.commit()
+            finally:
+                session.close()
+    
+    def create_session(self):
+        Session = sessionmaker(bind=self.engine)
+        return Session()
+
+    def save_event_in_calendar_to_database(self, calendar_id, event_id):
+            event_in_calendar = EventsInCalendar(calendar_id=calendar_id, event_id=event_id)
+            session = self.create_session()
+            try:
+                session.add(event_in_calendar)
+                session.commit()
+            finally:
+                session.close()
+
+
     def load_data_from_database(self):
         Session = sessionmaker(bind=self.engine)
         session = Session()
@@ -146,7 +189,7 @@ class Backend:
             self.calendars = {calendar.id: {"user_id": calendar.user_id} for calendar in calendars}
 
             events = session.query(Event).all()
-            self.events = {event.id: {"name": event.name, "description": event.description,
+            self.events = {event.id: {"name": event.name,"event_id": event.event_id,"description": event.description,
                                     "start_time": event.start_time, "end_time": event.end_time,
                                     "location": event.location, "organizer_id": event.organizer_id} for event in events}
 

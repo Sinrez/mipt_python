@@ -18,7 +18,7 @@ from uuid import uuid4
 class Event:
     """Класс события"""
     #to do добавить периодичность
-    def __init__(self, name, start_date, end_date, location, admin_id):
+    def __init__(self, name, start_date, end_date, location, admin_id, description):
         self.event_id = abs(hash(str(uuid4())))
         self.event_name = name
         self.event_start_date = start_date
@@ -26,6 +26,7 @@ class Event:
         self.event_location = location
         self.event_users = []
         self.event_admin = admin_id
+        self.event_description = description
     
     def add_user(self, user_id):
         self.event_users.append(user_id)
